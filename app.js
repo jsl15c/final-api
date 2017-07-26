@@ -46,7 +46,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 // ----------------------------------------------
 
-app.use(cors());
+app.use(cors({
+  credentials:true,
+  origin:['http://localhost:4200']
+}));
 
 // THIS MIDDELWARE CREATES THE "currentUser" varaivable for ALL views
 //    check if the user is loggged in
@@ -61,13 +64,16 @@ app.use((req, res, next) => {
 
 
 
-const index = require('./routes/index');
-app.use('/', index);
+const checklogin = require('./routes/checklogin');
+app.use('/api', checklogin);
 
-const patientApi = require('./routes/patient-route.js');
+const dataRoute = require('./routes/data-route');
+app.use('/api', dataRoute);
+
+const patientApi = require('./routes/patient-route');
 app.use('/patient-api', patientApi);
 
-const doctorApi = require('./routes/doctor-route.js');
+const doctorApi = require('./routes/doctor-route');
 app.use('/doctor-api', doctorApi);
 
 // catch 404 and forward to error handler

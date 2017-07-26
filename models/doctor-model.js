@@ -23,6 +23,11 @@ const doctorSchema = new Schema (
   phoneNumber:{
     type:String
   },
+  userType:{
+    type:String,
+    default:'doctor'
+  },
+  patientKey:String,
   patients:[{
     type:Schema.Types.ObjectId,
     // "ref" is the string name of a model that the ID refers to

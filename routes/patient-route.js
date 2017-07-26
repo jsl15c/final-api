@@ -4,6 +4,7 @@ const passport = require('passport');
 const router = express.Router();
 
 const PatientModel = require('../models/patient-model');
+const DoctorModel = require('../models/doctor-model');
 const DataModel = require('../models/data-model');
 
 // GET all patients
@@ -50,6 +51,8 @@ router.post('/signup', (req, res, next) => {
 
       newPatient.save((err) => {
         if (err) {
+          console.log(err);
+          console.log(newPatient);
           res.status(500).json({message:'User server error'});
           return;
         }
@@ -103,28 +106,6 @@ router.post('/login', (req, res, next) => {
     authenticateFunction(req, res, next);
 });
 
-
-// POST logout
-router.post('/logout', (req, res, next) => {
-  //req.logout defined by passport
-  req.logout();
-  res.status(200).json({message:'Logout successful'});
-});
-
-// GET checklogin
-router.get('/checklogin', (req, res, next) => {
-  if (!req.user) {
-    res.status(401).json({message:'You are not logged in'});
-    return;
-  }
-  // do not send pasword to front end
-  req.user.password = undefined;
-  // sends req.user info to front end
-  res.status(200).json(req.user);
-});
-
-
-
 // POST update patient
 router.post('/update/:myId', (req, res, next) => {
   // console.log(req.params.myId);
@@ -142,9 +123,6 @@ router.post('/update/:myId', (req, res, next) => {
     }
   );
 });
-
-
-
 
 // POST delete patient
 router.post('/:myId', (req, res, next) => {
@@ -164,5 +142,57 @@ router.post('/:myId', (req, res, next) => {
         return;
   });
 });
+
+// route finds doctor with matching code (entered by patient on client)
+// and adds patient to doctor
+router.post('/add-patient-to-doctor/:myId', (req, res, next) => {
+  DoctorModel.findOne({patientKey:req.params.myId},
+    (err, docPatient) => {
+      if (err) {
+        next(err);
+        console.log(docPatient);
+        return;
+      }
+      if (!docPatient) {
+        res.status(400).json({message:'Invalid doctor code'});
+        return;
+      }
+      docPatient.patients.push(req.user);
+      res.status(200).json({message:'Patient added to doctor'});
+
+      docPatient.save((err) => {
+        if (err) {
+          next(err);
+          return;
+        }
+        docPatient
+        .populate('patients')
+        .exec((err, theDoctor) => {
+          if (err) {
+            res.status(500).json({message:'error'});
+            return;
+          }
+          res.status(200).json(theDoctor);
+        });
+      });
+    });
+  });
+
+// // route finds doctor with matching code (entered by patient on client)
+// // and adds patient to doctor
+// router.get('/add-patient-to-doctor/:myId', (req, res, next) => {
+//   DoctorModel.findOne({patientKey:req.params.myId})
+//   .populate('patients') // retrieve all info of user
+//   .exec((err, theDoctor) => {
+//
+//   if (err) {
+//     res.status(500).json({message:'error'});
+//     return;
+//   }
+//   res.status(200).json(theDoctor);
+// });
+// });
+
+
 
 module.exports = router;

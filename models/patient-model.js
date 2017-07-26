@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const DataModel = require('./data-model.js');
 
 const Schema = mongoose.Schema;
+
+const DataModel = require('../models/data-model.js');
 
 const patientSchema = new Schema (
 {
@@ -18,12 +19,11 @@ const patientSchema = new Schema (
   // picture:{},
   phoneNumber:{type:String},
   // data:[DataModel.schema]
-  data:[{
-    type:Schema.Types.ObjectId,
-    // "ref" is the string name of a model that the ID refers to
-    ref:'Data'
-    // you NEED "ref" to use populate()
-  }]
+  userType:{
+    type:String,
+    default:'patient'
+  },
+  data:[DataModel.schema]
 },
 
 {

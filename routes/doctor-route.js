@@ -2,6 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const router = express.Router();
+const randomkey = require('randomkey');
 
 const PatientModel = require('../models/patient-model');
 const DoctorModel = require('../models/doctor-model');
@@ -41,11 +42,14 @@ router.post('/signup', (req, res, next) => {
       const salt = bcrypt.genSaltSync(10);
       const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
+      const patientKeyGen = randomkey(6);
+
       const newDoctor = new DoctorModel({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email:req.body.email,
-        password:hashedPassword
+        password:hashedPassword,
+        patientKey:patientKeyGen
       });
 
       newDoctor.save((err) => {
@@ -116,17 +120,17 @@ router.post('/logout', (req, res, next) => {
   res.status(200).json({message:'Logout successful'});
 });
 
-// GET checklogin
-router.get('/checklogin', (req, res, next) => {
-  if (!req.user) {
-    res.status(401).json({message:'You are not logged in'});
-    return;
-  }
-  // do not send pasword to front end
-  req.user.password = undefined;
-  // sends req.user info to front end
-  res.status(200).json(req.user);
-});
+// // GET checklogin
+// router.get('/checklogin', (req, res, next) => {
+//   if (!req.user) {
+//     res.status(401).json({message:'You are not logged in'});
+//     return;
+//   }
+//   // do not send pasword to front end
+//   req.user.password = undefined;
+//   // sends req.user info to front end
+//   res.status(200).json(req.user);
+// });
 
 // POST delete doctor
 router.post('/:myId', (req, res, next) => {

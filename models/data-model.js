@@ -4,8 +4,8 @@ const dataSchema = new mongoose.Schema(
   sleep:
     {
       duration:{type:Number},
-      quality:{type:Number, min:1, max:5},
-      disruptions:Boolean
+      quality:{type:Number},
+      disruptions:{type:Number}
     },
   diet: {type: String},
   treatment: {type: String}

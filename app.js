@@ -48,7 +48,7 @@ app.use(passport.session());
 
 app.use(cors({
   credentials:true,
-  origin:[process.env.MONGODB_URI]
+  origin:['http://localhost:4200']
 }));
 
 // THIS MIDDELWARE CREATES THE "currentUser" varaivable for ALL views

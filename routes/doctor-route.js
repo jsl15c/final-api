@@ -11,10 +11,10 @@ const DoctorModel = require('../models/doctor-model');
 router.get('/list', (req, res, next) => {
   DoctorModel.find((err, doctorList) => {
     if (err) {
-      res.json(err);
+      res.status(500).json({message:'id doesnt exist'});
       return;
     }
-    res.json(doctorList);
+    res.status(200).json(doctorList);
   });
 });
 

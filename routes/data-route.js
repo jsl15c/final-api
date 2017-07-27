@@ -13,7 +13,7 @@ router.post('/patient-data/:myId', (req, res, next) => {
   // }
     PatientModel.findById(req.params.myId, (err, userData) => {
       if (err) {
-        next(err);
+        res.status(500).json({message:'server failed'});
         return;
       }
       const newData = new DataModel ({

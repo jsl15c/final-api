@@ -100,11 +100,90 @@ router.post('/login', (req, res, next) => {
         thePatient.password = undefined;
 
         // everything works
+        console.log(req.user.firstName);
         res.status(200).json(thePatient);
       });
     });
     authenticateFunction(req, res, next);
 });
+
+
+// route finds doctor with matching code (entered by patient on client)
+// and adds patient to doctor
+router.post('/add-patient-doctor', (req, res, next) => {
+  DoctorModel.findOne({patientKey:req.body.doctorCode},
+    (err, doctorWithCode) => {
+      if (err) {
+        // next(err);
+        res.status(500).json({message:'Find failed'});
+        console.log('find failed');
+        return;
+      }
+      if (!doctorWithCode) {
+        res.status(400).json({message:'Invalid doctor code'});
+        console.log('Invalid doctor code');
+        return;
+      }
+      // console.log(req.user.doctors + ' ajdshfjaklsdfhlakshj');
+      if (!req.user) {
+        res.status(400).json({message:'log in to add doctor'});
+        console.log('log in to add doctor');
+        return;
+      }
+
+      doctorWithCode.patients.push(req.user);
+      req.user.doctors.push(doctorWithCode._id);
+
+
+      // req.user.doctors.push(d);
+      // console.log('');
+      // console.log(doctorWithCode._id);
+      doctorWithCode.save((err) => {
+        if (err) {
+          res.status(500).json({message:'Save failed'});
+          return;
+        }
+        DoctorModel.findOne({patientKey:req.body.doctorCode})
+        .populate('patients')
+        .exec((err, theDoctor) => {
+          if (err) {
+            res.status(500).json({message:'error'});
+            return;
+          }
+          req.user.save((err) => {
+            if (err) {
+              res.status(500).json({message:'user Save failed'});
+              return;
+            }
+            res.status(200).json(req.user);
+            return;
+          });
+        });
+      });
+    });
+  });
+
+
+  router.post('/remove-doctor', (req, res, next) => {
+    if (!req.user) {
+      console.log(req.user + 'is not logged in');
+      res.status(400).json({message:'login to edit account'});
+      return;
+    }
+    PatientModel.findByIdAndUpdate(req.user._id,
+      {
+        doctors:[{}]
+      },
+      (err, patientFromDb) => {
+        if(err) {
+          res.status(500).json({message:'server error'});
+          return;
+        }
+        res.status(200).json(patientFromDb);
+        return;
+      }
+    );
+  });
 
 // POST update patient
 router.post('/update/:myId', (req, res, next) => {
@@ -124,13 +203,17 @@ router.post('/update/:myId', (req, res, next) => {
   );
 });
 
+
+
+
 // POST delete patient
 router.post('/:myId', (req, res, next) => {
   // console.log(req.params.myId);
   PatientModel.findByIdAndRemove(req.params.myId,
     (err, patientEntry) => {
         if (err) {
-          next(err);
+          // next(err);
+          res.status(500).json({message:'Find'});
           console.log(patientEntry);
           return;
         }
@@ -143,40 +226,7 @@ router.post('/:myId', (req, res, next) => {
   });
 });
 
-// route finds doctor with matching code (entered by patient on client)
-// and adds patient to doctor
-router.post('/add-patient-to-doctor/:myId', (req, res, next) => {
-  DoctorModel.findOne({patientKey:req.params.myId},
-    (err, docPatient) => {
-      if (err) {
-        next(err);
-        console.log(docPatient);
-        return;
-      }
-      if (!docPatient) {
-        res.status(400).json({message:'Invalid doctor code'});
-        return;
-      }
-      docPatient.patients.push(req.user);
-      res.status(200).json({message:'Patient added to doctor'});
 
-      docPatient.save((err) => {
-        if (err) {
-          next(err);
-          return;
-        }
-        docPatient
-        .populate('patients')
-        .exec((err, theDoctor) => {
-          if (err) {
-            res.status(500).json({message:'error'});
-            return;
-          }
-          res.status(200).json(theDoctor);
-        });
-      });
-    });
-  });
 
 // // route finds doctor with matching code (entered by patient on client)
 // // and adds patient to doctor

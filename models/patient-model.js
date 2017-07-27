@@ -23,7 +23,13 @@ const patientSchema = new Schema (
     type:String,
     default:'patient'
   },
-  data:[DataModel.schema]
+  data:[DataModel.schema],
+  doctors:[{
+    type:Schema.Types.ObjectId,
+    // "ref" is the string name of a model that the ID refers to
+    ref:'Doctor'
+    // you NEED "ref" to use populate()
+  }]
 },
 
 {

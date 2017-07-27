@@ -12,10 +12,34 @@ router.get('/checklogin', (req, res, next) => {
     res.status(401).json({message:'You are not logged in'});
     return;
   }
-  // do not send pasword to front end
-  req.user.password = undefined;
-  // sends req.user info to front end
-  res.status(200).json(req.user);
+
+  if (req.user.userType === 'patient') {
+    PatientModel.findById(req.user._id)
+      .populate('doctors')
+        .exec((err, onePatient) => {
+          if(err) {
+            res.status(500).json({message:'Patient find failed'});
+            return;
+          }
+          // onePatient.password = undefined;
+          console.log(req.user + ' is logged in');
+          res.status(200).json(onePatient);
+        });
+  }
+  if (req.user.userType === 'doctor') {
+    DoctorModel.findById(req.user._id)
+      .populate('patients')
+        .exec((err, oneDoctor) => {
+          if(err) {
+            res.status(500).json({message:'Doctor find failed'});
+            return;
+          }
+          // oneDoctor.password = undefined;
+          console.log(req.user + ' is logged in');
+          res.status(200).json(oneDoctor);
+        });
+  }
+  res.status(400).status({message:'please log in'});
 });
 
 // GET currentuser
@@ -35,6 +59,37 @@ router.post('/logout', (req, res, next) => {
   console.log(req.user);
   res.status(200).json({message:'Logout successful '});
 });
+
+// // GET populate user patient or doctor field with full object
+// router.get('/populate', (req, res, next) => {
+//   if (!req.user) {
+//     res.status(400).json({message:'need to login'});
+//     return;
+//   }
+//   if (req.user.userType === 'patient') {
+//     PatientModel.findById(req.user._id)
+//       .populate('doctors')
+//         .exec((err, onePatient) => {
+//           if(err) {
+//             res.status(500).json({message:'Patient find failed'});
+//             return;
+//           }
+//           res.status(200).json(onePatient);
+//         });
+//   }
+//   if (req.user.userType === 'doctor') {
+//     PatientModel.findById(req.user._id)
+//       .populate('patients')
+//         .exec((err, oneDoctor) => {
+//           if(err) {
+//             res.status(500).json({message:'Doctor find failed'});
+//             return;
+//           }
+//           res.status(200).json(oneDoctor);
+//         });
+//   }
+//   return;
+// });
 
 
 

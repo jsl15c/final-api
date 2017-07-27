@@ -25,7 +25,6 @@ router.post('/signup', (req, res, next) => {
        res.status(400).json({message:'All fields are required'});
        return;
   }
-
   PatientModel.findOne(
     {email:req.body.email},
     (err, patientFromDb) => {
@@ -111,7 +110,7 @@ router.post('/login', (req, res, next) => {
 // route finds doctor with matching code (entered by patient on client)
 // and adds patient to doctor
 router.post('/add-patient-doctor', (req, res, next) => {
-  DoctorModel.findOne({patientKey:req.body.doctorCode},
+  DoctorModel.findOne({patientKey:req.body.patientKey},
     (err, doctorWithCode) => {
       if (err) {
         // next(err);
@@ -120,6 +119,7 @@ router.post('/add-patient-doctor', (req, res, next) => {
         return;
       }
       if (!doctorWithCode) {
+        console.log("------------" + doctorWithCode);
         res.status(400).json({message:'Invalid doctor code'});
         console.log('Invalid doctor code');
         return;
@@ -166,13 +166,13 @@ router.post('/add-patient-doctor', (req, res, next) => {
 
   router.post('/remove-doctor', (req, res, next) => {
     if (!req.user) {
-      console.log(req.user + 'is not logged in');
+      console.log(' you are not logged in');
       res.status(400).json({message:'login to edit account'});
       return;
     }
     PatientModel.findByIdAndUpdate(req.user._id,
       {
-        doctors:[{}]
+        doctors:[]
       },
       (err, patientFromDb) => {
         if(err) {
@@ -207,7 +207,7 @@ router.post('/update/:myId', (req, res, next) => {
 
 
 // POST delete patient
-router.post('/:myId', (req, res, next) => {
+router.post('/delete/:myId', (req, res, next) => {
   // console.log(req.params.myId);
   PatientModel.findByIdAndRemove(req.params.myId,
     (err, patientEntry) => {

@@ -15,7 +15,7 @@ require('dotenv').config();
 // run all the code inside "passport-config.js"
 require('./config/passport-config.js');
 
-mongoose.connect('mongodb://localhost/project-api');
+mongoose.connect(process.env.MONGODB_URI);
 
 const app = express();
 
@@ -48,7 +48,7 @@ app.use(passport.session());
 
 app.use(cors({
   credentials:true,
-  origin:['http://localhost:4200']
+  origin:[process.env.MONGODB_URI]
 }));
 
 // THIS MIDDELWARE CREATES THE "currentUser" varaivable for ALL views
@@ -76,6 +76,9 @@ app.use('/patient-api', patientApi);
 const doctorApi = require('./routes/doctor-route');
 app.use('/doctor-api', doctorApi);
 
+app.use((req, res, next) => {
+  res.sendFile(__dirname+'/public/dist/index.html');
+});
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   const err = new Error('Not Found');

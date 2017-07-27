@@ -25,7 +25,8 @@ router.get('/checklogin', (req, res, next) => {
           console.log(req.user + ' is logged in');
           res.status(200).json(onePatient);
         });
-  }
+      }
+
   if (req.user.userType === 'doctor') {
     DoctorModel.findById(req.user._id)
       .populate('patients')
@@ -42,13 +43,13 @@ router.get('/checklogin', (req, res, next) => {
   res.status(400).status({message:'please log in'});
 });
 
-// GET currentuser
-router.get('/currentuser', (req, res, next) => {
-  // do not send pasword to front end
-  req.user.password = undefined;
-  // sends req.user info to front end
-  res.status(200).json(req.user);
-});
+// // GET currentuser
+// router.get('/currentuser', (req, res, next) => {
+//   // do not send pasword to front end
+//   req.user.password = undefined;
+//   // sends req.user info to front end
+//   res.status(200).json(req.user);
+// });
 
 
 // POST logout

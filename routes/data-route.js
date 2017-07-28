@@ -6,35 +6,40 @@ const router = express.Router();
 const PatientModel = require('../models/patient-model');
 const DataModel = require('../models/data-model');
 
-router.post('/patient-data/:myId', (req, res, next) => {
+router.post('/patient-data/new', (req, res, next) => {
   // if (!req.user) {
   //   res.status(400).json({message:'You need to be logged in to view/edit data'});
   //   return;
   // }
-    PatientModel.findById(req.params.myId, (err, userData) => {
+    PatientModel.findById(req.user._id,
+      (err, userData) => {
       if (err) {
+        console.log('🔥🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥');
         res.status(500).json({message:'server failed'});
         return;
       }
+      // console.log(req.params.myId);
       const newData = new DataModel ({
-          sleep: {
-            duration:req.body.duration,
-            disruptions:req.body.disruptions,
-            quality:(req.body.duration/req.body.disruptions)
-          },
-          diet:req.body.diet,
-          treatment:req.body.treatment
+        sleep: {
+          duration:req.body.duration,
+          disruptions:req.body.disruptions,
+          quality:(req.body.duration/req.body.disruptions),
+        },
+            diet:req.body.diet
       });
 
       newData.save((err) => {
         if (err) {
+          console.log('🔥🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥');
+          console.log(newData.sleep);
           res.status(500).json({message:'data save error'});
           return;
         }
-        console.log(newData);
+        // sleep.markModified('data');
+        console.log('🔥🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥');
         userData.data.push(newData);
-        console.log('🛑 🛑 🛑 🛑 🛑 🛑 🛑 ');
-        console.log(userData.data);
+        console.log('🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟');
+        console.log(userData);
       userData.save((err) => {
         if(err) {
           res.status(500).json({message:'user data save error'});

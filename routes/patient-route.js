@@ -119,9 +119,9 @@ router.post('/add-patient-doctor', (req, res, next) => {
         return;
       }
       if (!doctorWithCode) {
-        console.log("------------" + doctorWithCode);
+        console.log(doctorWithCode);
         res.status(400).json({message:'Invalid doctor code'});
-        console.log('Invalid doctor code');
+        console.log('Invalid doctor code: ' + doctorWithCode.patientKey);
         return;
       }
       // console.log(req.user.doctors + ' ajdshfjaklsdfhlakshj');

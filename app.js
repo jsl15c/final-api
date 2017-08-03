@@ -76,6 +76,9 @@ app.use('/patient-api', patientApi);
 const doctorApi = require('./routes/doctor-route');
 app.use('/doctor-api', doctorApi);
 
+// const demo = require('./routes/demo');
+// app.use('/', demo);
+
 app.use((req, res, next) => {
   res.sendFile(__dirname+'/public/index.html');
 });

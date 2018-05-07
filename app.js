@@ -62,8 +62,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 const checklogin = require('./routes/checklogin');
 app.use('/api', checklogin);
 
@@ -76,12 +74,10 @@ app.use('/patient-api', patientApi);
 const doctorApi = require('./routes/doctor-route');
 app.use('/doctor-api', doctorApi);
 
-// const demo = require('./routes/demo');
-// app.use('/', demo);
-
 app.use((req, res, next) => {
   res.sendFile(__dirname+'/public/index.html');
 });
+
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   const err = new Error('Not Found');

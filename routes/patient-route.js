@@ -63,12 +63,10 @@ router.post('/signup', (req, res, next) => {
             res.status(500).json({message:'login server error'});
             return;
           }
-          console.log('😃 😃 😃 😃 😃 😃');
+          newPatient.password = undefined;
+          // send users info to front end except password ^
+          res.status(200).json(newPatient);
         });
-
-        newPatient.password = undefined;
-        // send users info to front end except password ^
-        res.status(200).json(newPatient);
       });
     }
   );
@@ -83,13 +81,11 @@ router.post('/login', (req, res, next) => {
         res.status(500).json({message:'Unknown login error'});
         return;
       }
-
       // login failed
       if (!thePatient) {
         res.status(401).json(strategyInfo);
         return;
       }
-
       // login success
       req.login(thePatient, (err) => {
         if (err) {
@@ -97,9 +93,7 @@ router.post('/login', (req, res, next) => {
           return;
         }
         thePatient.password = undefined;
-
         // everything works
-        console.log(req.user.firstName);
         res.status(200).json(thePatient);
       });
     });
@@ -130,14 +124,8 @@ router.post('/add-patient-doctor', (req, res, next) => {
         console.log('log in to add doctor');
         return;
       }
-
       doctorWithCode.patients.push(req.user);
       req.user.doctors.push(doctorWithCode._id);
-
-
-      // req.user.doctors.push(d);
-      // console.log('');
-      // console.log(doctorWithCode._id);
       doctorWithCode.save((err) => {
         if (err) {
           res.status(500).json({message:'Save failed'});
@@ -160,6 +148,26 @@ router.post('/add-patient-doctor', (req, res, next) => {
           });
         });
       });
+    });
+  });
+
+  router.post('/patient-data/new', (req, res, next) => {
+    const newData = new DataModel ({
+      sleep: {
+        duration: req.body.duration,
+        quality: req.body.quality,
+        disruptions: req.body.disruptions
+      },
+      diet:req.body.diet,
+      treatment:req.body.treatment
+    });
+
+    newData.save((err) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      res.status(200).json(newData);
     });
   });
 

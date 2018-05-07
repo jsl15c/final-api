@@ -22,7 +22,7 @@ router.get('/checklogin', (req, res, next) => {
             return;
           }
           // onePatient.password = undefined;
-          console.log(req.user + ' is logged in');
+          console.log(req.user.firstName + ' is logged in');
           res.status(200).json(onePatient);
         });
       }
@@ -36,7 +36,7 @@ router.get('/checklogin', (req, res, next) => {
             return;
           }
           // oneDoctor.password = undefined;
-          console.log(req.user + ' is logged in');
+          console.log(req.user.firstName + ' is logged in');
           res.status(200).json(oneDoctor);
         });
   }

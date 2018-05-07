@@ -14,7 +14,6 @@ router.post('/patient-data/new', (req, res, next) => {
     PatientModel.findById(req.user._id,
       (err, userData) => {
       if (err) {
-        console.log('🔥🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥');
         res.status(500).json({message:'server failed'});
         return;
       }
@@ -30,15 +29,12 @@ router.post('/patient-data/new', (req, res, next) => {
 
       newData.save((err) => {
         if (err) {
-          console.log('🔥🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥');
           console.log(newData.sleep);
           res.status(500).json({message:'data save error'});
           return;
         }
         // sleep.markModified('data');
-        console.log('🔥🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥');
         userData.data.push(newData);
-        console.log('🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟 🐟');
         console.log(userData);
       userData.save((err) => {
         if(err) {

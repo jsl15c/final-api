@@ -8,6 +8,7 @@ const DoctorModel = require('../models/doctor-model');
 
 // GET checklogin
 router.get('/checklogin', (req, res, next) => {
+  console.log(Object.keys(req));
   if (!req.user) {
     res.status(401).json({message:'You are not logged in'});
     return;

@@ -234,6 +234,48 @@ router.post('/delete/:myId', (req, res, next) => {
   });
 });
 
+const fetch = require('node-fetch');
+const btoa = require('btoa');
+
+const CLIENT_ID = 'ohnuts2-e7635ef65cd15a71c55c1d7779335a1b4646620026628838937';
+const CLIENT_SECRET = 'EAUC1PDoT6EcGnEsKvHBxjRY4N00xFWfxARC17Aq';
+
+// async function getBearer() {
+//   let data = await fetch('https://api.kroger.com/v1/connect/oauth2/token?grant_type=client_credentials&scope=profile.compact', {
+//     "method": "POST",
+//     "headers": {
+//       "Content-Type": "application/x-www-form-urlencoded",
+//       "Authorization": `Basic ${btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`
+//     }
+//   })
+//   let json = await data;
+//   console.log(json);
+//   return json.access_token;
+// }
+
+router.get('/get-items', async (req, res, next) => {
+  let tokenReq = await fetch('https://api.kroger.com/v1/connect/oauth2/token?grant_type=client_credentials&scope=product.compact', {
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": `Basic ${btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`
+    }
+  })
+  let json = await tokenReq.json();
+
+  let data = await fetch('https://api.kroger.com/v1/products?filter.brand=Chobani', {
+    "method": "GET",
+    "headers": {
+      "Accept": "application/json",
+      "Authorization": ('Bearer ' + json.access_token)
+    }
+  })
+
+  let foodJson = await data.json();
+  console.log(foodJson);
+  res.status(200).json(foodJson)
+  
+})
 
 
 // // route finds doctor with matching code (entered by patient on client)

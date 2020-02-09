@@ -18,6 +18,7 @@ require('./config/passport-config.js');
 mongoose.connect(process.env.MONGODB_URI);
 
 const app = express();
+const router = express.Router();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
